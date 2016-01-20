@@ -30,14 +30,14 @@ get_line_from_string(char **lines, int *line_len)
   for (i=0; z[i]; i++)
     {
       if (z[i] == '\n')
-	{
-	  if (i > 0 && z[i-1]=='\r')
-	    { z[i-1] = '\0'; }
-	  else
-	    { z[i] = '\0'; }
-	  i++;
-	  break;
-	}
+  {
+    if (i > 0 && z[i-1]=='\r')
+      { z[i-1] = '\0'; }
+    else
+      { z[i] = '\0'; }
+    i++;
+    break;
+  }
     }
 
   /* advance lines on */
@@ -57,7 +57,7 @@ check_for_link(char *line, int *skip_chars)
   char *result = NULL;
   int   found = 0;
 
-  if (*p == '[') 		/* [ link [title] ] */
+  if (*p == '[')    /* [ link [title] ] */
     {
       /* XXX TODO XXX 
        * Allow links like [the Main page] ( covert to the_main_page )
@@ -70,38 +70,38 @@ check_for_link(char *line, int *skip_chars)
       while (  *p != ']' && *p != '\0' && !isspace(*p) ) p++;
 
       if (isspace(*p))
-	{
-	  *p = '\0';
-	  title = ++p; 
-	  while (  *p != ']' && *p != '\0' ) 
-	    p++;
-	}
+  {
+    *p = '\0';
+    title = ++p;
+    while (  *p != ']' && *p != '\0' )
+      p++;
+  }
 
       *p = '\0';
       p++;
     }                     
   else if (!strncasecmp(p, "http://", 7)
-	   || !strncasecmp(p, "mailto://", 9)
-	   || !strncasecmp(p, "file://", 7))
+     || !strncasecmp(p, "mailto://", 9)
+     || !strncasecmp(p, "file://", 7))
     {
       while ( *p != '\0' && !isspace(*p) ) p++;
 
 
       found = 1;
     }
-  else if (isupper(*p))      	/* Camel-case */
+  else if (isupper(*p))       /* Camel-case */
     {
       int num_upper_char = 1;
       p++;
       while ( *p != '\0' && isalnum(*p) )
-	{
-	  if (isupper(*p))
-	    { found = 1; num_upper_char++; }
-	  p++;
-	}
+  {
+    if (isupper(*p))
+      { found = 1; num_upper_char++; }
+    p++;
+  }
 
       if (num_upper_char == (p-start)) /* Dont make ALLCAPS links */
-	return NULL;
+  return NULL;
     }
 
   if (found)  /* cant really set http/camel links in place */
@@ -120,26 +120,26 @@ check_for_link(char *line, int *skip_chars)
 
       /* is it an image ? */
       if (!strncmp(url+len-4, ".gif", 4) || !strncmp(url+len-4, ".png", 4) 
-	  || !strncmp(url+len-4, ".jpg", 4) || !strncmp(url+len-5, ".jpeg", 5))
-	{
-	  if (title)
-	    asprintf(&result, "<a href='%s'><img src='%s' border='0'></a>",
-		     title, url);
-	  else
-	    asprintf(&result, "<img src='%s' border='0'>", url);
-	}
+    || !strncmp(url+len-4, ".jpg", 4) || !strncmp(url+len-5, ".jpeg", 5))
+  {
+    if (title)
+      asprintf(&result, "<a href='%s'><img src='%s' border='0'></a>",
+         title, url);
+    else
+      asprintf(&result, "<img src='%s' border='0'>", url);
+  }
       else
-	{
-	  char *extra_attr = "";
+  {
+    char *extra_attr = "";
 
-	  if (!strncasecmp(url, "http://", 7))
-	    extra_attr = " title='WWW link' ";
+    if (!strncasecmp(url, "http://", 7))
+      extra_attr = " title='WWW link' ";
 
-	  if (title)
-	    asprintf(&result,"<a %s href='%s'>%s</a>", extra_attr, url, title);
-	  else
-	    asprintf(&result, "<a %s href='%s'>%s</a>", extra_attr, url, url);
-	}
+    if (title)
+      asprintf(&result,"<a %s href='%s'>%s</a>", extra_attr, url, title);
+    else
+      asprintf(&result, "<a %s href='%s'>%s</a>", extra_attr, url, url);
+  }
 
       
 
@@ -208,7 +208,7 @@ is_wiki_format_char_or_space(char c)
 void
 wiki_print_data_as_html(HttpResponse *res, char *raw_page_data)
 {
-  char *p = raw_page_data;	    /* accumalates non marked up text */
+  char *p = raw_page_data;      /* accumalates non marked up text */
   char *q = NULL, *link = NULL; /* temporary scratch stuff */
   char *line = NULL;
   int   line_len;
@@ -234,8 +234,8 @@ wiki_print_data_as_html(HttpResponse *res, char *raw_page_data)
 
 
   q = p;  /* p accumalates non marked up text, q is just a pointer
-	   * to the end of the current line - used by below func. 
-	   */
+     * to the end of the current line - used by below func.
+     */
 
   while ( (line = get_line_from_string(&q, &line_len)) )
     {
@@ -247,133 +247,133 @@ wiki_print_data_as_html(HttpResponse *res, char *raw_page_data)
        */
 
       if (pre_on && !isspace(*line) && *line != '\0')
-	{
-	  /* close any preformatting if already on*/
-	  http_response_printf(res, "\n</pre>\n") ;
-	  pre_on = 0;
-	}
+  {
+    /* close any preformatting if already on*/
+    http_response_printf(res, "\n</pre>\n") ;
+    pre_on = 0;
+  }
 
       /* Handle ordered & unordered list, code is a bit mental.. */
       for (i=0; i<NUM_LIST_TYPES; i++)
-	{
+  {
 
-	  /* extra checks avoid bolding */
-	  if ( *line == listtypes[i].ident
-	       && ( *(line+1) == listtypes[i].ident || isspace(*(line+1)) ) ) 
-	    {                     	
-	      int item_depth = 0;
+    /* extra checks avoid bolding */
+    if ( *line == listtypes[i].ident
+         && ( *(line+1) == listtypes[i].ident || isspace(*(line+1)) ) )
+      {
+        int item_depth = 0;
 
-	      if (listtypes[!i].depth)
-		{
-		  for (j=0; j<listtypes[!i].depth; j++)
-		    http_response_printf(res, "</%s>\n", listtypes[!i].tag);
-		  listtypes[!i].depth = 0;
-		}
+        if (listtypes[!i].depth)
+    {
+      for (j=0; j<listtypes[!i].depth; j++)
+        http_response_printf(res, "</%s>\n", listtypes[!i].tag);
+      listtypes[!i].depth = 0;
+    }
 
-	      while ( *line == listtypes[i].ident ) { line++; item_depth++; }
-	  
-	      if (item_depth < listtypes[i].depth)
-		{
-		  for (j = 0; j < (listtypes[i].depth - item_depth); j++)
-		    http_response_printf(res, "</%s>\n", listtypes[i].tag);
-		}
-	      else
-		{
-		  for (j = 0; j < (item_depth - listtypes[i].depth); j++)
-		    http_response_printf(res, "<%s>\n", listtypes[i].tag);
-		}
-	      
-	      http_response_printf(res, "<li>");
-	      
-	      listtypes[i].depth = item_depth;
-	      
-	      skip_to_content = 1;
-	    }
-	  else if (listtypes[i].depth && !listtypes[!i].depth) 
-	    {
-	      /* close current list */
+        while ( *line == listtypes[i].ident ) { line++; item_depth++; }
 
-	      for (j=0; j<listtypes[i].depth; j++)
-		http_response_printf(res, "</%s>\n", listtypes[i].tag);
-	      listtypes[i].depth = 0;
-	    }
-	}
+        if (item_depth < listtypes[i].depth)
+    {
+      for (j = 0; j < (listtypes[i].depth - item_depth); j++)
+        http_response_printf(res, "</%s>\n", listtypes[i].tag);
+    }
+        else
+    {
+      for (j = 0; j < (item_depth - listtypes[i].depth); j++)
+        http_response_printf(res, "<%s>\n", listtypes[i].tag);
+    }
+
+        http_response_printf(res, "<li>");
+
+        listtypes[i].depth = item_depth;
+
+        skip_to_content = 1;
+      }
+    else if (listtypes[i].depth && !listtypes[!i].depth)
+      {
+        /* close current list */
+
+        for (j=0; j<listtypes[i].depth; j++)
+    http_response_printf(res, "</%s>\n", listtypes[i].tag);
+        listtypes[i].depth = 0;
+      }
+  }
 
       if (skip_to_content)
-	goto line_content; /* skip parsing any more initial chars */
+  goto line_content; /* skip parsing any more initial chars */
 
       /* Tables */
 
       if (*line == '|')
         {
-	  if (table_on==0)
-	    http_response_printf(res, "<table class='wikitable' cellspacing='0' cellpadding='4'>\n");
-	  line++;
+    if (table_on==0)
+      http_response_printf(res, "<table class='wikitable' cellspacing='0' cellpadding='4'>\n");
+    line++;
 
-	    http_response_printf(res, "<tr><td>");
+      http_response_printf(res, "<tr><td>");
 
-	  table_on = 1;
-	  goto line_content;
+    table_on = 1;
+    goto line_content;
         }
       else
         {
-	  if(table_on)
-	    {
-	      http_response_printf(res, "</table>\n");
-	      table_on = 0;
-	    }
+    if(table_on)
+      {
+        http_response_printf(res, "</table>\n");
+        table_on = 0;
+      }
         }
 
       /* pre formated  */
 
       if ( (isspace(*line) || *line == '\0'))
-	{
-	  int n_spaces = 0;
+  {
+    int n_spaces = 0;
 
-	  while ( isspace(*line) ) { line++; n_spaces++; }
+    while ( isspace(*line) ) { line++; n_spaces++; }
 
-	  if (*line == '\0')  /* empty line - para */
-	    {
-	      if (pre_on)
-		{
-		  http_response_printf(res, "\n") ;
-		  continue;
-		}
-	      else if (open_para)
-		{
-		  http_response_printf(res, "\n</p><p>\n") ;
-		}
-	      else
-		{
-		  http_response_printf(res, "\n<p>\n") ;
-		  open_para = 1;
-		}
-	    }
-	  else /* starts with space so Pre formatted, see above for close */
-	    {
-	      if (!pre_on)
-		http_response_printf(res, "<pre>\n") ;
-	      pre_on = 1;
-	      line = line - ( n_spaces - 1 ); /* rewind so extra spaces
+    if (*line == '\0')  /* empty line - para */
+      {
+        if (pre_on)
+    {
+      http_response_printf(res, "\n") ;
+      continue;
+    }
+        else if (open_para)
+    {
+      http_response_printf(res, "\n</p><p>\n") ;
+    }
+        else
+    {
+      http_response_printf(res, "\n<p>\n") ;
+      open_para = 1;
+    }
+      }
+    else /* starts with space so Pre formatted, see above for close */
+      {
+        if (!pre_on)
+    http_response_printf(res, "<pre>\n") ;
+        pre_on = 1;
+        line = line - ( n_spaces - 1 ); /* rewind so extra spaces
                                                  they matter to pre */
-	      http_response_printf(res, "%s\n", line);
-	      continue;
-	    }
-	}
+        http_response_printf(res, "%s\n", line);
+        continue;
+      }
+  }
       else if ( *line == '=' )
-	{
-	  while (*line == '=')
-	    { header_level++; line++; }
+  {
+    while (*line == '=')
+      { header_level++; line++; }
 
-	  http_response_printf(res, "<h%d>", header_level);
-	  p = line;
-	}
+    http_response_printf(res, "<h%d>", header_level);
+    p = line;
+  }
       else if ( *line == '-' && *(line+1) == '-' )
-	{
-	  /* rule */
-	  http_response_printf(res, "<hr/>\n");
-	  while ( *line == '-' ) line++;
-	}
+  {
+    /* rule */
+    http_response_printf(res, "<hr/>\n");
+    while ( *line == '-' ) line++;
+  }
 
     line_content:
 
@@ -384,151 +384,150 @@ wiki_print_data_as_html(HttpResponse *res, char *raw_page_data)
       p = line;
 
       while ( *line != '\0' )
-	{
-	  if ( *line == '!' && !isspace(*(line+1))) 
-	    {                	/* escape next word - skip it */
-	      *line = '\0';
-	      http_response_printf(res, "%s", p);
-	      p = ++line;
+  {
+    if ( *line == '!' && !isspace(*(line+1)))
+      {                 /* escape next word - skip it */
+        *line = '\0';
+        http_response_printf(res, "%s", p);
+        p = ++line;
 
-	      while (*line != '\0' && !isspace(*line)) line++;
-	      if (*line == '\0')
-		continue;
-	    }
-	  else if ((link = check_for_link(line, &skip_chars)) != NULL)
-	    {
-	      http_response_printf(res, "%s", p);
-	      http_response_printf(res, "%s", link); 
+        while (*line != '\0' && !isspace(*line)) line++;
+        if (*line == '\0')
+    continue;
+      }
+    else if ((link = check_for_link(line, &skip_chars)) != NULL)
+      {
+        http_response_printf(res, "%s", p);
+        http_response_printf(res, "%s", link);
 
-	      line += skip_chars;
-	      p = line;
+        line += skip_chars;
+        p = line;
 
-	      continue;
+        continue;
 
-	    }
-	  /* TODO: Below is getting bloated and messy, need rewriting more
-	   *       compactly ( and efficently ).
-	   */
-	  else if (*line == '*')
-	    {
-	      /* Try and be smart about what gets bolded */
-	      if (line_start != line 
-		  && !is_wiki_format_char_or_space(*(line-1)) 
-		  && !bold_on)
-		{ line++; continue; }
+      }
+    /* TODO: Below is getting bloated and messy, need rewriting more
+     *       compactly ( and efficently ).
+     */
+    else if (*line == '*')
+      {
+        /* Try and be smart about what gets bolded */
+        if (line_start != line
+      && !is_wiki_format_char_or_space(*(line-1))
+      && !bold_on)
+    { line++; continue; }
 
-	      if ((isspace(*(line+1)) && !bold_on))
-		{ line++; continue; }
+        if ((isspace(*(line+1)) && !bold_on))
+    { line++; continue; }
 
-		/* bold */
-		*line = '\0';
-		http_response_printf(res, "%s%s\n", p, bold_on ? "</b>" : "<b>");
-		bold_on ^= 1; /* reset flag */
-		p = line+1;
+    /* bold */
+    *line = '\0';
+    http_response_printf(res, "%s%s\n", p, bold_on ? "</b>" : "<b>");
+    bold_on ^= 1; /* reset flag */
+    p = line+1;
 
-	    }
-	  else if (*line == '_' )
-	    {
-	      if (line_start != line 
-		  && !is_wiki_format_char_or_space(*(line-1)) 
-		  && !underline_on)
-		{ line++; continue; }
+      }
+    else if (*line == '_' )
+      {
+        if (line_start != line
+      && !is_wiki_format_char_or_space(*(line-1))
+      && !underline_on)
+    { line++; continue; }
 
-	      if (isspace(*(line+1)) && !underline_on)
-		{ line++; continue; }
-	      /* underline */
-	      *line = '\0';
-	      http_response_printf(res, "%s%s\n", p, underline_on ? "</u>" : "<u>"); 
-	      underline_on ^= 1; /* reset flag */
-	      p = line+1;
-	    }
-	  else if (*line == '-')
-	    {
-	      if (line_start != line 
-		  && !is_wiki_format_char_or_space(*(line-1)) 
-		  && !strikethrough_on)
-		{ line++; continue; }
+        if (isspace(*(line+1)) && !underline_on)
+    { line++; continue; }
+        /* underline */
+        *line = '\0';
+        http_response_printf(res, "%s%s\n", p, underline_on ? "</u>" : "<u>");
+        underline_on ^= 1; /* reset flag */
+        p = line+1;
+      }
+    else if (*line == '-')
+      {
+        if (line_start != line
+      && !is_wiki_format_char_or_space(*(line-1))
+      && !strikethrough_on)
+    { line++; continue; }
 
-	      if (isspace(*(line+1)) && !strikethrough_on)
-		{ line++; continue; }
-	       
-	      /* strikethrough */
-	      *line = '\0';
-	      http_response_printf(res, "%s%s\n", p, strikethrough_on ? "</del>" : "<del>"); 
-	      strikethrough_on ^= 1; /* reset flag */
-	      p = line+1; 
-	      
+        if (isspace(*(line+1)) && !strikethrough_on)
+    { line++; continue; }
 
-	    }
-	  else if (*line == '/' )
-	    {
-	      if (line_start != line 
-		  && !is_wiki_format_char_or_space(*(line-1)) 
-		  && !italic_on)
-		{ line++; continue; }
+        /* strikethrough */
+        *line = '\0';
+        http_response_printf(res, "%s%s\n", p, strikethrough_on ? "</del>" : "<del>");
+        strikethrough_on ^= 1; /* reset flag */
+        p = line+1;
 
-	      if (isspace(*(line+1)) && !italic_on)
-		{ line++; continue; }
+      }
+    else if (*line == '/' )
+      {
+        if (line_start != line
+      && !is_wiki_format_char_or_space(*(line-1))
+      && !italic_on)
+    { line++; continue; }
 
-	      /* crude path detection */
-	      if (line_start != line && isspace(*(line-1)) && !italic_on)
-		{ 
-		  char *tmp   = line+1;
-		  int slashes = 0;
+        if (isspace(*(line+1)) && !italic_on)
+    { line++; continue; }
 
-		  /* Hack to escape out file paths */
-		  while (*tmp != '\0' && !isspace(*tmp))
-		    { 
-		      if (*tmp == '/') slashes++;
-		      tmp++;
-		    }
+        /* crude path detection */
+        if (line_start != line && isspace(*(line-1)) && !italic_on)
+    {
+      char *tmp   = line+1;
+      int slashes = 0;
 
-		  if (slashes > 1 || (slashes == 1 && *(tmp-1) != '/')) 
-		    { line = tmp; continue; }
-		}
+      /* Hack to escape out file paths */
+      while (*tmp != '\0' && !isspace(*tmp))
+        {
+          if (*tmp == '/') slashes++;
+          tmp++;
+        }
 
-	      if (*(line+1) == '/')
-		line++; 	/* escape out common '//' - eg urls */
-	      else
-		{
-		  /* italic */
-		  *line = '\0';
-		  http_response_printf(res, "%s%s\n", p, italic_on ? "</i>" : "<i>"); 
-		  italic_on ^= 1; /* reset flag */
-		  p = line+1; 
-		}
-	    }
-	  else if (*line == '|' && table_on) /* table column */
-	    {
-	      *line = '\0';
-	      http_response_printf(res, "%s", p);
-	      http_response_printf(res, "</td><td>\n");
-	      p = line+1;
-	    }
+      if (slashes > 1 || (slashes == 1 && *(tmp-1) != '/'))
+        { line = tmp; continue; }
+    }
 
-	  line++;
+        if (*(line+1) == '/')
+    line++;   /* escape out common '//' - eg urls */
+        else
+    {
+      /* italic */
+      *line = '\0';
+      http_response_printf(res, "%s%s\n", p, italic_on ? "</i>" : "<i>");
+      italic_on ^= 1; /* reset flag */
+      p = line+1;
+    }
+      }
+    else if (*line == '|' && table_on) /* table column */
+      {
+        *line = '\0';
+        http_response_printf(res, "%s", p);
+        http_response_printf(res, "</td><td>\n");
+        p = line+1;
+      }
 
-	} /* next word */
+    line++;
 
-      if (*p != '\0') 			/* accumalated text left over */
-	http_response_printf(res, "%s", p);
+  } /* next word */
+
+      if (*p != '\0')       /* accumalated text left over */
+  http_response_printf(res, "%s", p);
 
       /* close any html tags that could be still open */
 
 
       if (listtypes[ULIST].depth)
-	http_response_printf(res, "</li>");
+  http_response_printf(res, "</li>");
 
       if (listtypes[OLIST].depth)
-	http_response_printf(res, "</li>");
+  http_response_printf(res, "</li>");
 
       if (table_on)
-	http_response_printf(res, "</td></tr>\n");
+  http_response_printf(res, "</td></tr>\n");
 
       if (header_level)
-	http_response_printf(res, "</h%d>\n", header_level);  
+  http_response_printf(res, "</h%d>\n", header_level);
       else
-	http_response_printf(res, "\n");
+  http_response_printf(res, "\n");
 
 
     } /* next line */
@@ -565,7 +564,7 @@ wiki_redirect(HttpResponse *res, char *location)
 
   http_response_append_header(res, header);
   http_response_printf(res, "<html>\n<p>Redirect to %s</p>\n</html>\n", 
-		       location);
+           location);
   http_response_set_status(res, 302, "Moved Temporarily");
   http_response_send(res);
 
@@ -601,7 +600,7 @@ wiki_show_edit_page(HttpResponse *res, char *wikitext, char *page)
 
   if (wikitext == NULL) wikitext = "";
   http_response_printf(res, EDITFORM, page, wikitext);
-		       
+
   wiki_show_footer(res);
 
   http_response_send(res);
@@ -651,30 +650,30 @@ wiki_get_pages(int  *n_pages, char *expr)
   while(n--) 
     {
       if ((namelist[n]->d_name)[0] == '.' 
-	  || !strcmp(namelist[n]->d_name, "styles.css"))
-	goto cleanup;
+    || !strcmp(namelist[n]->d_name, "styles.css"))
+  goto cleanup;
 
       if (expr != NULL) 
-	{ 			/* Super Simple Search */
-	  char *data = NULL;
-	  if ((data = file_read(namelist[n]->d_name)) != NULL)
-	    if (strstr(data, expr) == NULL)
-	      if (strcmp(namelist[n]->d_name, expr) != 0) 
-		goto cleanup; 
-	}
+  {       /* Super Simple Search */
+    char *data = NULL;
+    if ((data = file_read(namelist[n]->d_name)) != NULL)
+      if (strstr(data, expr) == NULL)
+        if (strcmp(namelist[n]->d_name, expr) != 0)
+    goto cleanup;
+  }
 
 
       stat(namelist[n]->d_name, &st);
 
       /* ignore anything but regular readable files */
       if (S_ISREG(st.st_mode) && access(namelist[n]->d_name, R_OK) == 0)
-	{
-	  pages[i]        = malloc(sizeof(WikiPageList));
-	  pages[i]->name  = strdup (namelist[n]->d_name);
-	  pages[i]->mtime = st.st_mtime;
+  {
+    pages[i]        = malloc(sizeof(WikiPageList));
+    pages[i]->name  = strdup (namelist[n]->d_name);
+    pages[i]->mtime = st.st_mtime;
 
-	  i++;
-	}
+    i++;
+  }
 
     cleanup:
       free(namelist[n]);
@@ -707,9 +706,9 @@ wiki_show_changes_page(HttpResponse *res)
       pTm = localtime(&pages[i]->mtime);
       strftime(datebuf, sizeof(datebuf), "%Y-%m-%d %H:%M", pTm);
       http_response_printf(res, "<a href='%s'>%s</a> %s<br />\n", 
-			   pages[i]->name, 
-			   pages[i]->name, 
-			   datebuf);
+         pages[i]->name,
+         pages[i]->name,
+         datebuf);
     }
 
   wiki_show_footer(res);
@@ -737,17 +736,17 @@ wiki_show_search_results_page(HttpResponse *res, char *expr)
   if (pages)
     {
       for (i=0; i<n_pages; i++)
-	if (!strcmp(pages[i]->name, expr)) /* redirect on page name match */
-	  wiki_redirect(res, pages[i]->name);
+  if (!strcmp(pages[i]->name, expr)) /* redirect on page name match */
+    wiki_redirect(res, pages[i]->name);
 
       wiki_show_header(res, "Search", FALSE);
 
       for (i=0; i<n_pages; i++)
-	{
-	  http_response_printf(res, "<a href='%s'>%s</a><br />\n", 
-			       pages[i]->name, 
-			       pages[i]->name);
-	}
+  {
+    http_response_printf(res, "<a href='%s'>%s</a><br />\n",
+             pages[i]->name,
+             pages[i]->name);
+  }
     }
   else 
     {
@@ -781,20 +780,20 @@ void
 wiki_show_header(HttpResponse *res, char *page_title, int want_edit)
 {
   http_response_printf(res, 
-                       "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">\n"
-                       "<html xmlns='http://www.w3.org/1999/xhtml'>\n"
-		       "<head>\n"
-                       "<meta http-equiv='Content-Type' content='text/html; charset=utf-8' />\n" 
-		       "<link rel='SHORTCUT ICON' href='/favicon.ico' />\n"
-		       "<link media='all' href='/styles.css' rel='stylesheet' type='text/css' />\n"
-		       "<title>%s</title>\n"
+                       "<!DOCTYPE html>\n"
+                       "<html>\n"
+           "<head>\n"
+                       "<meta http-equiv='Content-Type' content='text/html; charset=utf-8'>\n"
+           "<link rel='SHORTCUT ICON' href='/favicon.ico'>\n"
+           "<link media='all' href='/styles.css' rel='stylesheet' type='text/css'>\n"
+           "<title>%s</title>\n"
 
-		       "</head>\n"
-		       "<body>\n", page_title
-		       );
+           "</head>\n"
+           "<body>\n", page_title
+           );
 
   http_response_printf(res, PAGEHEADER, page_title, 
-		       (want_edit) ? " ( <a href='?edit' title='Edit this wiki page contents. [alt-j]' accesskey='j'>Edit</a> ) " : "" );     
+           (want_edit) ? " (<a href='?edit' title='Edit this wiki page contents. [alt-j]' accesskey='j'>Edit</a>) " : "" );
 }
 
 void
@@ -803,100 +802,100 @@ wiki_show_footer(HttpResponse *res)
   http_response_printf(res, "%s", PAGEFOOTER);
 
   http_response_printf(res, 
-		       "</body>\n"
-		       "</html>\n"
-		       );
+           "</body>\n"
+           "</html>\n"
+           );
 }
 
 void
 wiki_handle_rest_call(HttpRequest  *req, 
-		      HttpResponse *res,
-		      char         *func)
+          HttpResponse *res,
+          char         *func)
 {
 
   if (func != NULL && *func != '\0')
     {
       if (!strcmp(func, "page/get"))
-	{
-	  char *page = http_request_param_get(req, "page");
+  {
+    char *page = http_request_param_get(req, "page");
 
-	  if (page == NULL)
-	    page = http_request_get_query_string(req);
+    if (page == NULL)
+      page = http_request_get_query_string(req);
 
-	  if (page && (access(page, R_OK) == 0)) 
-	    {
-	      http_response_printf(res, "%s", file_read(page));
-	      http_response_send(res);
-	      return;
-	    }  
-	}
+    if (page && (access(page, R_OK) == 0))
+      {
+        http_response_printf(res, "%s", file_read(page));
+        http_response_send(res);
+        return;
+      }
+  }
       else if (!strcmp(func, "page/set"))
-	{
-	  char *wikitext = NULL, *page = NULL;
-	  if( ( (wikitext = http_request_param_get(req, "text")) != NULL)
-	      && ( (page = http_request_param_get(req, "page")) != NULL))
-	    {
-	      file_write(page, wikitext);	      
-	      http_response_printf(res, "success");
-	      http_response_send(res);
-	      return;
-	    }
-	}
+  {
+    char *wikitext = NULL, *page = NULL;
+    if( ( (wikitext = http_request_param_get(req, "text")) != NULL)
+        && ( (page = http_request_param_get(req, "page")) != NULL))
+      {
+        file_write(page, wikitext);
+        http_response_printf(res, "success");
+        http_response_send(res);
+        return;
+      }
+  }
       else if (!strcmp(func, "page/delete"))
-	{
-	  char *page = http_request_param_get(req, "page");
+  {
+    char *page = http_request_param_get(req, "page");
 
-	  if (page == NULL)
-	    page = http_request_get_query_string(req);
+    if (page == NULL)
+      page = http_request_get_query_string(req);
 
-	  if (page && (unlink(page) > 0))
-	    {
-	      http_response_printf(res, "success");
-	      http_response_send(res);
-	      return;  
-	    }
-	}
+    if (page && (unlink(page) > 0))
+      {
+        http_response_printf(res, "success");
+        http_response_send(res);
+        return;
+      }
+  }
       else if (!strcmp(func, "page/exists"))
-	{
-	  char *page = http_request_param_get(req, "page");
+  {
+    char *page = http_request_param_get(req, "page");
 
-	  if (page == NULL)
-	    page = http_request_get_query_string(req);
+    if (page == NULL)
+      page = http_request_get_query_string(req);
 
-	  if (page && (access(page, R_OK) == 0)) 
-	    {
-	      http_response_printf(res, "success");
-	      http_response_send(res);
-	      return;  
-	    }
-	}
+    if (page && (access(page, R_OK) == 0))
+      {
+        http_response_printf(res, "success");
+        http_response_send(res);
+        return;
+      }
+  }
       else if (!strcmp(func, "pages") || !strcmp(func, "search"))
-	{
-	  WikiPageList **pages = NULL;
-	  int            n_pages, i;
-	  char          *expr = http_request_param_get(req, "expr");
+  {
+    WikiPageList **pages = NULL;
+    int            n_pages, i;
+    char          *expr = http_request_param_get(req, "expr");
 
-	  if (expr == NULL)
-	    expr = http_request_get_query_string(req);
-	  
-	  pages = wiki_get_pages(&n_pages, expr);
+    if (expr == NULL)
+      expr = http_request_get_query_string(req);
 
-	  if (pages)
-	    {
-	      for (i=0; i<n_pages; i++)
-		{
-		  struct tm   *pTm;
-		  char   datebuf[64];
-		  
-		  pTm = localtime(&pages[i]->mtime);
-		  strftime(datebuf, sizeof(datebuf), "%Y-%m-%d %H:%M", pTm);
-		  http_response_printf(res, "%s\t%s\n", pages[i]->name, datebuf);
-		}
+    pages = wiki_get_pages(&n_pages, expr);
 
-	      http_response_send(res);
-	      return;  
-	    }
-	}
+    if (pages)
+      {
+        for (i=0; i<n_pages; i++)
+    {
+      struct tm   *pTm;
+      char   datebuf[64];
+
+      pTm = localtime(&pages[i]->mtime);
+      strftime(datebuf, sizeof(datebuf), "%Y-%m-%d %H:%M", pTm);
+      http_response_printf(res, "%s\t%s\n", pages[i]->name, datebuf);
+    }
+
+        http_response_send(res);
+        return;
+      }
+  }
     }
 
   http_response_set_status(res, 500, "Error");
@@ -916,13 +915,13 @@ wiki_handle_http_request(HttpRequest *req)
   char         *command  = http_request_get_query_string(req); 
   char         *wikitext = "";
 
-  util_dehttpize(page); 	/* remove any encoding on the requested
-				   page name.                           */
+  util_dehttpize(page);   /* remove any encoding on the requested
+           page name.                           */
 
   if (!strcmp(page, "/"))
     {
       if (access("WikiHome", R_OK) != 0)
-	wiki_redirect(res, "/WikiHome?create");
+  wiki_redirect(res, "/WikiHome?create");
       page = "/WikiHome";
     }
 
@@ -945,7 +944,7 @@ wiki_handle_http_request(HttpRequest *req)
     }
 
 
-  page = page + 1; 		/* skip slash */
+  page = page + 1;    /* skip slash */
 
   if (!strncmp(page, "api/", 4))
     {
@@ -953,7 +952,7 @@ wiki_handle_http_request(HttpRequest *req)
 
       page += 4; 
       for (p=page; *p != '\0'; p++)
-	if (*p=='?') { *p ='\0'; break; }
+  if (*p=='?') { *p ='\0'; break; }
       
       wiki_handle_rest_call(req, res, page); 
       exit(0);
@@ -982,51 +981,51 @@ wiki_handle_http_request(HttpRequest *req)
   else if (!strcmp(page, "Create"))
     {
       if ( (wikitext = http_request_param_get(req, "title")) != NULL)
-	{
-	  /* create page and redirect */
-	  wiki_redirect(res, http_request_param_get(req, "title"));
-	}
+  {
+    /* create page and redirect */
+    wiki_redirect(res, http_request_param_get(req, "title"));
+  }
       else
-	{
-	   /* show create page form  */
-	  wiki_show_create_page(res);
-	}
+  {
+     /* show create page form  */
+    wiki_show_create_page(res);
+  }
     }
   else
     {
       /* TODO: dont blindly write wikitext data to disk */
       if ( (wikitext = http_request_param_get(req, "wikitext")) != NULL)
-	{
-	  file_write(page, wikitext);	      
-	}
+  {
+    file_write(page, wikitext);
+  }
 
-      if (access(page, R_OK) == 0) 	/* page exists */
-	{
-	  wikitext = file_read(page);
-	  
-	  if (!strcmp(command, "edit"))
-	    {
-	      /* print edit page */
-	      wiki_show_edit_page(res, wikitext, page);
-	    }
-	  else
-	    {
-	      wiki_show_page(res, wikitext, page);
-	    }
-	}
+      if (access(page, R_OK) == 0)  /* page exists */
+  {
+    wikitext = file_read(page);
+
+    if (!strcmp(command, "edit"))
+      {
+        /* print edit page */
+        wiki_show_edit_page(res, wikitext, page);
+      }
+    else
+      {
+        wiki_show_page(res, wikitext, page);
+      }
+  }
       else
-	{
-	  if (!strcmp(command, "create"))
-	    {
-	      wiki_show_edit_page(res, NULL, page);
-	    }
-	  else
-	    {
-	      char buf[1024];
-	      snprintf(buf, 1024, "%s?create", page);
-	      wiki_redirect(res, buf);
-	    }
-	}
+  {
+    if (!strcmp(command, "create"))
+      {
+        wiki_show_edit_page(res, NULL, page);
+      }
+    else
+      {
+        char buf[1024];
+        snprintf(buf, 1024, "%s?create", page);
+        wiki_redirect(res, buf);
+      }
+  }
     }
 
 }
@@ -1044,10 +1043,10 @@ wiki_init(void)
   else
     {
       if (getenv("HOME") == NULL)
-	{
-	  fprintf(stderr, "Unable to get home directory, is HOME set?\n");
-	  exit(1);
-	}
+  {
+    fprintf(stderr, "Unable to get home directory, is HOME set?\n");
+    exit(1);
+  }
 
       snprintf(datadir, 512, "%s/.didiwiki", getenv("HOME"));
     }  
@@ -1056,10 +1055,10 @@ wiki_init(void)
   if (stat(datadir, &st) != 0 )
     {
       if (mkdir(datadir, 0755) == -1)
-	{
-	  fprintf(stderr, "Unable to create '%s', giving up.\n", datadir);
-	  exit(1);
-	}
+  {
+    fprintf(stderr, "Unable to create '%s', giving up.\n", datadir);
+    exit(1);
+  }
     }
 
   chdir(datadir);
@@ -1079,4 +1078,3 @@ wiki_init(void)
   
   return 1;
 }
-
