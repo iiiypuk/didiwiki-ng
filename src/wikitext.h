@@ -22,10 +22,10 @@
                                                                          \
 "<div id='header'>\n"                                                    \
 "<form method='get' action='/Search'>\n"                                 \
-"<table border='0' width='100%%'>\n"                                      \
+"<table class='header'>\n"                                      \
 "<tr>\n"                                                                 \
-"<td align='left' ><strong>%s</strong> %s</td>\n"         \
-"<td align='right' >\n"                                    \
+"<td class='title' ><strong>%s</strong> %s</td>\n"         \
+"<td class='actions' >\n"                                    \
 "<a href='/WikiHome' title='Visit Wiki home page. [alt-z]' accesskey='z'>Home</a> |\n"  \
 "<a href='/Changes' title='List recent changes in the wiki. [alt-r]' accesskey='r' >Changes</a> | \n"                                    \
 "<a href='/Create' title='Create a new wiki page by title. [alt-c]' accesskey='c'>New</a> | \n"                                         \
@@ -199,11 +199,14 @@
 "\n" \
 "#footer {\n" \
 "    font-size: 10px;\n" \
-"    color: #ddd;\n" \
+"    color: #444;\n" \
 "    margin-top:40px;\n" \
 "    width: 100%;\n" \
 "    text-align: center;\n" \
 "}\n" \
+"table.header { border: 0; width: 100%; }\n" \
+"table.header td.actions { text-align: right; }\n" \
+"table.header td.title { text-align: left; }\n" \
 "table.wikitable { background-color: #fff; border: 1px solid #aaa; }\n" \
 "table.wikitable td { background-color: #fff; border: 1px solid #aaa; }\n" \
 "\n" \
