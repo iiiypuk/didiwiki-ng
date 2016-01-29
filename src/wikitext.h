@@ -182,27 +182,34 @@
 "}\n" \
 "\n" \
 "#header {\n" \
-"    font-size: 90%;\n" \
-"    background-color: #eef;\n" \
-"    border: 1px solid #aaa;\n" \
-"    font-family: Verdana, Arial, Helvetica, sans-serif;\n" \
-"    padding: 5px;\n" \
-"    margin-bottom:20px;\n" \
+"  font-size: 90%;\n" \
+"  background-color: #eef;\n" \
+"  border: 1px solid #aaa;\n" \
+"  font-family: Verdana, Arial, Helvetica, sans-serif;\n" \
+"  padding: 5px;\n" \
+"  margin-bottom:20px;\n" \
 "}\n" \
 "#header input {\n" \
-"    margin:0px;\n" \
-"    padding: 0;\n" \
-"    background-color: White;\n" \
-"    border: 1px solid #aaaaaa;\n" \
-"    font-size: 90%;\n" \
+"  margin:0px;\n" \
+"  padding: 0;\n" \
+"  background-color: White;\n" \
+"  border: 1px solid #aaaaaa;\n" \
+"  font-size: 90%;\n" \
+"}\n" \
+"\n" \
+"#wikidata img {\n" \
+"  border: 0;\n" \
+"  display: block;\n" \
+"  margin: 2px auto;\n" \
+"  max-width: 100%;\n" \
 "}\n" \
 "\n" \
 "#footer {\n" \
-"    font-size: 10px;\n" \
-"    color: #444;\n" \
-"    margin-top:40px;\n" \
-"    width: 100%;\n" \
-"    text-align: center;\n" \
+"  font-size: 10px;\n" \
+"  color: #444;\n" \
+"  margin-top:40px;\n" \
+"  width: 100%;\n" \
+"  text-align: center;\n" \
 "}\n" \
 "table.header { border: 0; width: 100%; }\n" \
 "table.header td.actions { text-align: right; }\n" \
@@ -211,55 +218,55 @@
 "table.wikitable td { background-color: #fff; border: 1px solid #aaa; }\n" \
 "\n" \
 "pre {\n" \
-"    font-family: monospace;\n" \
-"    background-color: #eee;\n" \
-"    padding: 2px;\n" \
-"    padding-left: 10px;\n" \
-"    margin-left: 20px;\n" \
-"    margin-right: 20px;\n" \
+"  font-family: monospace;\n" \
+"  background-color: #eee;\n" \
+"  padding: 2px;\n" \
+"  padding-left: 10px;\n" \
+"  margin-left: 20px;\n" \
+"  margin-right: 20px;\n" \
 "}\n" \
 "\n" \
 "hr {\n" \
-" height: 1px;\n" \
-" color: #aaaaaa;\n" \
-" background-color: #aaaaaa;\n" \
-" border: 0;\n" \
-" margin: 0.2em 5px 0.2em 5px;\n" \
+"  height: 1px;\n" \
+"  color: #aaaaaa;\n" \
+"  background-color: #aaaaaa;\n" \
+"  border: 0;\n" \
+"  margin: 0.2em 5px 0.2em 5px;\n" \
 "}\n" \
 "\n" \
 "form {\n" \
-"    border: none;\n" \
-"    margin: 0;\n" \
+"  border: none;\n" \
+"  margin: 0;\n" \
 "}\n" \
 "\n" \
 "textarea {\n" \
-"    border: 1px solid #aaaaaa;\n" \
-"    color: Black;\n" \
-"    background-color: white;\n" \
-"    width: 100%;\n" \
-"    padding: 0.1em;\n" \
-"    overflow: auto;\n" \
+"  border: 1px solid #aaaaaa;\n" \
+"  color: Black;\n" \
+"  background-color: white;\n" \
+"  width: 100%;\n" \
+"  padding: 0.1em;\n" \
+"  overflow: auto;\n" \
 "}\n" \
 "\n" \
 "input {\n" \
-"    margin-top:1px;\n" \
-"    padding: 0 0.4em !important;\n" \
-"    background-color: White;\n" \
-"    border: 1px solid #aaaaaa;\n" \
+"  margin-top:1px;\n" \
+"  padding: 0 0.4em !important;\n" \
+"  background-color: White;\n" \
+"  border: 1px solid #aaaaaa;\n" \
 "}\n" \
 "\n" \
 "a, ulink{\n" \
-"   color: #333;\n" \
-"   text-decoration:none;\n" \
-"   border-bottom: 1px #333 dotted;\n" \
-"   display: inline;\n" \
-" }\n" \
+"  color: #333;\n" \
+"  text-decoration:none;\n" \
+"  border-bottom: 1px #333 dotted;\n" \
+"  display: inline;\n" \
+"}\n" \
 "\n" \
 "a:hover {\n" \
-"   color: #333;\n" \
-"   text-decoration: None;\n" \
-"   border-bottom: 1px #000 solid;\n" \
-"   }\n" \
+"  color: #333;\n" \
+"  text-decoration: None;\n" \
+"  border-bottom: 1px #000 solid;\n" \
+"}\n" \
 "\n" \
 "a:visited {\n" \
 "   color: #333;\n" \

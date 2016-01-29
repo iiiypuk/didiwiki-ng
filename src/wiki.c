@@ -123,10 +123,10 @@ check_for_link(char *line, int *skip_chars)
     || !strncmp(url+len-4, ".jpg", 4) || !strncmp(url+len-5, ".jpeg", 5))
   {
     if (title)
-      asprintf(&result, "<a href='%s'><img src='%s' border='0'></a>",
+      asprintf(&result, "<a href='%s'><img src='%s' alt=''></a>",
          title, url);
     else
-      asprintf(&result, "<img src='%s' border='0'>", url);
+      asprintf(&result, "<img src='%s' alt=''>", url);
   }
       else
   {
